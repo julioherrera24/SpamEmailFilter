@@ -154,3 +154,243 @@ int main() {
     } while(repeatProgram == true); //if repeatProgram is true, then the program will repeat
     return 0;
 }
+
+string getFirstWord(string text) {
+    if(text.size() == 0) { //if an empty string is passed in, we will return ""
+        return "";
+    }
+    int start{}; //we create a varibale start to get the position of the start of the first word
+    int end{}; //we create a variable end to get the position of the end of the first word
+    bool foundWord = false;
+    string firstWord{};
+    
+    int i = 0;
+    while(i < text.size()) {
+        if(isalpha(text[i]) && !foundWord) { //if we havent found a word and we find the first character, then we set start to i
+            start = i;
+            foundWord = true; //we then change the foundword variable to true
+        }
+        if(!isalpha(text[i]) && foundWord) { //if we found a word and the next position does not contain a alphabet letter, then we set that position to end and break from the loop
+            end = i;
+            break;
+        }
+        ++i; //check the next position
+    }
+    if(foundWord && i == text.size()) { //if we found a word and the string ended with the letter, then we set end to the size of the text
+        end = i;
+    }
+    firstWord = text.substr(start, end - start);
+    return firstWord; //returns the first word in a string
+}
+
+string getLastWord(string text) {
+    if(text.size() == 0) {
+        return ""; //if an empty string is passed in, we will return ""
+    }
+    int start{};
+    int end{};
+    string lastWord{};
+    for(int i = 0; i < text.size() - 1; ++i) {
+        if(isalpha(text[i])) {
+            start = i;
+            while(isalpha(text[i])) { //since we want to get the last word in a string, we want to use a while loop in order to ignore the first couple of words that a string may contain
+                lastWord = lastWord + text[i];
+                ++i; //since we are increasing i in the while loop, we then have to subtract 1 to the for loop, in order to     not pass boundaries
+                if(!isalpha(text[i])) {
+                    end = i; //gets the position of the final alphabet character in the last word
+                }
+            }
+        }
+    }
+    lastWord = text.substr(start, end - start);
+    return lastWord; //returns the last word in a string
+}
+
+string extractWord(string& text) { //we are passing by reference
+    if(text.size() == 0) {
+        return ""; //if an empty string is passed in, we will return ""
+    }
+    string extractedWord{};
+    int i = 0; //since we are changing the string everytime we call to this function, we know that the beginning of the word will be 0, also since we are getting rid of all non-letters preceding the previous word
+    while(i < text.size()) {
+        if(isalpha(text[i])) {
+            extractedWord = extractedWord + text[i]; //as the same as getFirstWord, we add all of the alphabet characters in the string to create the word that will be extracted
+        }
+        else if(extractedWord != "") { //once we have a new extracted word, we will break out of the for loop. also if there are no words left(only punctuations) we will break out and not return them
+              break;
+        }
+        ++i;
+    }
+    text = text.substr(i, text.size() - i);
+    return extractedWord; //returns the new extracted word in a string everytime we call to this function
+}
+
+bool isUppercase(string text) {
+    if(text.size() == 0) {
+        return true; //if the string has no letters or size 0, then we return true
+    }
+    bool allUpper = true; //first set allUpper to true since I figured it would be easier to change it to false if I find a lowercase letter
+    for(int i = 0; i < text.size(); ++i) {
+        if(isalpha(text[i]) && islower(text[i])) { //if a character in a string is an alphabet letter and if its lowercase then we automatically set allUpper to false
+            allUpper = false;
+        }
+    }
+    return allUpper; //we return either true or false
+}
+
+string makeUppercase(string text) {
+    if(text.size() == 0) {
+        return ""; //if an empty string is passed in, we will return ""
+    }
+    string allUppercase{}; //we create a string variable that will take all uppercase words
+    for(int i = 0; i < text.size(); ++i) {
+        if(isalpha(text[i]) && islower(text[i])) { //if we find a lowercase letter, then we need to convert it to an uppercase letter
+            text[i] = toupper(text[i]);
+            allUppercase = allUppercase + text[i]; //adds the new uppercase letter to the string
+        }
+        else if(isalpha(text[i]) && isupper(text[i])) { //if they are uppercase, no need to change anything, we just add them together
+            allUppercase = allUppercase + text[i];
+        }
+        else if(!isalpha(text[i])) { //if we find anything that is not an alphabet letter, we let leave it alone and add it to the string
+            allUppercase = allUppercase + text[i];
+        }
+    }
+    return allUppercase; //returns all uppercase words with non alphabet characters
+}
+
+bool hasManyExclamations(string text) {
+    if(text.size() < 3 ) {
+        return false; //if an empty string is passed in or if the size of the array is less than 3, we will return false since it will not contains 3 consecutive exclamation points
+    }
+    bool has3consExclamations = false; //we first set it as false because we dont know if the string has 3 consecutive exclamation marks
+    for(int i = 0; i < text.size() - 2; ++i) {
+        if(text[i] == '!' && text[i+1] == '!' && text[i+2] == '!') { //if 3 consecutive positions have exclamation marks, then we set the variable to true
+            has3consExclamations = true;
+        }
+    }
+    return has3consExclamations; //we return either true or false depending on the string that it takes
+}
+
+bool isAVowel(char x) { //in order to check if there are more than 3 consonants together, i thought it would be easier to make a function for vowels since there are only 5 vowels
+    bool vowel = false; //we first start it as false because we dont know if a character is a vowel or not
+    if(x == 'a' || x == 'A' || x == 'e' || x == 'E' || x == 'i' || x == 'I' || x == 'o' || x == 'O' || x == 'u' || x == 'U') {
+        vowel = true; //if the character is a vowel, then we return true
+    }
+    return vowel;
+}
+
+bool isNonsenseWord(string text) {
+    if(text.size() < 4) {
+        return false; //if an empty string is passed in or if the size of the array is less than 4, we will return false since it will not contain more than 3 consonants
+    }
+    bool moreThan3Consonants = false; //we first start by creating a boolean variable for more than 3 cons and set it to false
+    for(int i = 0; i < text.size() - 3; ++i) { //we subtract 3 to text.size because we dont want to pass boundaries
+        if((isalpha(text[i]) && !isAVowel(text[i])) && (isalpha(text[i+1]) && !isAVowel(text[i+1])) && (isalpha(text[i+2]) && !isAVowel(text[i+2])) && (isalpha(text[i+3]) && !isAVowel(text[i+3]))) {
+            moreThan3Consonants = true; //if we find more than 3 consecutive consonants in alphabetic letters then we set the variable to true,
+        }
+    }
+    return moreThan3Consonants; //we return either true or false depending on the string that it takes
+}
+
+void doUnitTests() {
+    //getFirstWord Tests
+    assert(getFirstWord("hello there") == "hello");
+    assert(getFirstWord("Hello MANN") == "Hello");
+    assert(getFirstWord("") == "");
+    assert(getFirstWord("*310233232###") == "");
+    assert(getFirstWord(" ") == "");
+    assert(getFirstWord("hi310 hi hi bye ") == "hi");
+    assert(getFirstWord("hi") == "hi");
+    assert(getFirstWord("A Bee hit me") == "A");
+    assert(getFirstWord("helloooo there") == "helloooo");
+    assert(getFirstWord("!!Hello, Fred") == "Hello");
+    assert(getFirstWord(" $@#%!!") == "");
+    
+    //getLastWordTests
+    assert(getLastWord("hello there") == "there");
+    assert(getLastWord("Hello MANN") == "MANN");
+    assert(getLastWord("") == "");
+    assert(getLastWord("*310233232###") == "");
+    assert(getLastWord(" ") == "");
+    assert(getLastWord("hi310 hi hi bye ") == "bye");
+    assert(getLastWord("greetings, mom, how are you?") == "you");
+    assert(getLastWord("MAKE MONEY FAST!!") == "FAST");
+    assert(getLastWord("$$$I love MoNeY$$$") == "MoNeY");
+    assert(getLastWord("Hows the Weather BROOO!!!???") == "BROOO");
+    
+    //extractWord Test
+    string ews1 = " 310baby puppy";
+    assert(extractWord(ews1) == "baby" && ews1 == " puppy");
+    assert(extractWord(ews1) == "puppy" && ews1 == "");
+    string ews2 = "54321 ";
+    assert(extractWord(ews2) == "" && ews2 == "");
+    string ews3 = "yo $$$ h";
+    assert(extractWord(ews3) == "yo" && ews3 == " $$$ h");
+    assert(extractWord(ews3) == "h" && ews3 == "");
+    string s = "***AMAZING!*** Do it, now!!";
+    assert(extractWord(s) == "AMAZING" && s == "!*** Do it, now!!");
+    assert(extractWord(s) == "Do" && s == " it, now!!");
+    assert(extractWord(s) == "it" && s == ", now!!");
+    assert(extractWord(s) == "now" && s == "!!");
+    assert(extractWord(s) == "" && s == "");
+    string s2 = "***543210hello 123232there";
+    assert(extractWord(s2) == "hello"  &&  s2 == " 123232there");
+    assert(extractWord(s2) == "there"  &&  s2 == "");
+    assert(extractWord(s2) == ""  &&  s2 == "");
+    string s3 = "***sucks !!!TO &&&Suck";
+    assert(extractWord(s3) == "sucks"  &&  s3 == " !!!TO &&&Suck");
+    assert(extractWord(s3) == "TO"  &&  s3 == " &&&Suck");
+    assert(extractWord(s3) == "Suck"  &&  s3 == "");
+    assert(extractWord(s3) == ""  &&  s3 == "");
+    
+    //isUppercase Tests
+    assert(isUppercase("WOW!!"));
+    assert(isUppercase("JULIOOOO"));
+    assert(isUppercase("HELLOOOOO"));
+    assert(isUppercase("ARE U NOT ENTERTAINED####312"));
+    assert(isUppercase("RESISTANCE"));
+    assert(isUppercase("I HAVE THE FORCE"));
+    assert(!isUppercase("WoW!!"));
+    assert(!isUppercase("JuuLLiiOO"));
+    assert(!isUppercase("HeLLooo!!!"));
+    assert(!isUppercase("ResiSTANCE"));
+    assert(!isUppercase("i have DA force"));
+    
+    //makeUppercase Tests
+    assert(makeUppercase("Earn *big* MONEY at home!!") == "EARN *BIG* MONEY AT HOME!!");
+    assert(makeUppercase("my name is Julio h") == "MY NAME IS JULIO H");
+    assert(makeUppercase("310 is the city! where im from") == "310 IS THE CITY! WHERE IM FROM");
+    assert(makeUppercase("$$$$$$$$o$$$$$$") == "$$$$$$$$O$$$$$$");
+    assert(makeUppercase(" ") == " ");
+    assert(makeUppercase("yooooo wassuppppp") == "YOOOOO WASSUPPPPP");
+    assert(makeUppercase("i love to code") == "I LOVE TO CODE");
+    assert(makeUppercase("c++ beats C") == "C++ BEATS C");
+    assert(makeUppercase("!!!!!") == "!!!!!");
+    assert(makeUppercase("im getting the hang of this stuff") == "IM GETTING THE HANG OF THIS STUFF");
+    
+    //hasManyExclamations Tests
+    assert(!hasManyExclamations(""));
+    assert(hasManyExclamations("HELLO!!!"));
+    assert(hasManyExclamations("!!!!!!!!!!"));
+    assert(hasManyExclamations("YO!! YOO YOO!!!!"));
+    assert(!hasManyExclamations("!! HI HI HI !!"));
+    assert(!hasManyExclamations("!! !! !! !!"));
+    assert(hasManyExclamations("Wow!!!"));
+    assert(hasManyExclamations("Congrats!!!! Good luck!!!!"));
+    assert(!hasManyExclamations("W!I!N!"));
+    assert(!hasManyExclamations("LAKERS!! !!BABY!!"));
+     
+    //isNonsenseWord Tests
+    assert(isNonsenseWord("AGPQrxab"));
+    assert(isNonsenseWord("xxxxozzzz"));
+    assert(isNonsenseWord("cbsz rocks"));
+    assert(isNonsenseWord("lots of Pennys"));
+    assert(isNonsenseWord("thatsss ssso crazzzy"));
+    assert(!isNonsenseWord("mortgage"));
+    assert(!isNonsenseWord("discount prescriptions"));
+    assert(!isNonsenseWord("dddadddadddaddda"));
+    assert(!isNonsenseWord("hexxx xxxeh"));
+    assert(!isNonsenseWord("julio herrera"));
+    
+    cerr << "All tests succeeded" << endl;
+}
